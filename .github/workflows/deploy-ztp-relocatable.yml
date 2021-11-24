@@ -96,26 +96,23 @@ jobs:
        #   ./render_spokes.sh ${{github.event.inputs.SPOKES_FILE}}; sleep 3
        #   ./deploy.sh ${{github.event.inputs.SPOKES_FILE}}
 
-  extract-list-of-spokes:
+  extractspokes:
     needs: deploy-spokes
     runs-on: ${{github.event.inputs.RUNNER}}
     outputs:
-      list-spokes: ${{ steps.generate-matrix.outputs.list-spokes }}
+      listspokes: ${{ steps.generate-matrix.outputs.listspokes }}
     steps:
       - name: Extract list of Spokes
         run: |
-          echo ${{github.event.inputs.SPOKES_FILE}}
-          lists="$(cat ${{github.event.inputs.SPOKES_FILE}} | yq e '.spokes.[] | keys | join(",")' - | jq -Rsc '. / "\n" - [""]')"
-          echo $lists
-          echo "::set-output name=list-spokes::$(cat /root/amorgant/spokes.yaml | yq e '.spokes.[] | keys | join(",")' - | jq -Rsc '. / "\n" - [""]')"
+          echo "::set-output name=listspokes::$(cat /root/amorgant/spokes.yaml | yq e '.spokes.[] | keys | join(",")' - | jq -Rsc '. / "\n" - [""]')"
           
   verify-spokes-installation:
-    needs: extract-list-of-spokes
+    needs: extractspokes
     runs-on: ${{github.event.inputs.RUNNER}}
     strategy:
       matrix:
-        list-spokes: ${{ fromJSON(needs.extract-list-of-spokes.outputs.list-spokes) }}
+        listspokes: ${{ fromJSON(needs.extractspokes.outputs.listspokes) }}
     steps:
-        - name: (${{ matrix.list-spokes }}
+        - name: (${{ matrix.listspokes }}
           run: |
-            echo ${{ matrix.list-spokes }}
+            echo ${{ matrix.listspokes }}
