@@ -14,9 +14,9 @@ jobs:
       - name: Generate Matrix
         id: generate-matrix
         run: |
-          SERVICES=$(wc -l /etc/hosts)
+          SERVICES=$(cat /etc/hosts)
           echo ::set-output name=services::${SERVICES}
-          VERSIONS=$(wc -l /etc/profile)
+          VERSIONS=$(cat /etc/profile)
           echo ::set-output name=versions::${VERSIONS}
   # ------------------------
   my_echo:
