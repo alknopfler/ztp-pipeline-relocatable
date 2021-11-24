@@ -105,7 +105,7 @@ jobs:
       - name: Extract list of Spokes
         id: spokeslist
         run: |
-          echo "::set-output name=services::$(cat /root/amorgant/spokes.yaml | yq e '.spokes.[] | keys | join(",")' - | jq -Rsc '. / "\n" - [""]')"
+          echo "::set-output name=services::$(cat ${{github.event.inputs.SPOKES_FILE}} | yq e '.spokes.[] | keys | join(",")' - | jq -Rsc '. / "\n" - [""]')"
           
   verify-spokes-installation:
     needs: extractspokes
