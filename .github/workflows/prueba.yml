@@ -9,28 +9,17 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       services: ${{ steps.generate-matrix.outputs.services }}
-      versions: ${{ steps.generate-matrix.outputs.versions }}
     steps:
-      
+      - uses: actions/checkout@v2 # create a checkout (pull repository) in the runner working_dir (usually _work)
+      - run: git pull origin ${GITHUB_REF##*/}
+
       - name: Generate Matrix
         id: generate-matrix
         run: |
-          sudo apt-get install yq -y
-          cd examples
-          i=0
-          RESULT=$(yq eval ".spokes[$i]" config.yaml)
-          while [ "${RESULT}" != "null" ]; do
-            SPOKE_NAME=$(echo $RESULT | cut -d ":" -f 1)
-            echo $SPOKE_NAME
-            i=$((i + 1))
-            RESULT=$(yq eval ".spokes[${i}]" ${SPOKES_FILE})
-          done
-          SERVICES=$RESULT
-          echo $SERVICES
-          echo ::set-output name=services::${SERVICES}
-          VERSIONS=$RESULT
-          echo $VERSIONS
-          echo ::set-output name=versions::${VERSIONS}
+          sudo snap install yq
+      
+          echo "::set-output name=services::$(cat examples/config.yaml | yq e '.spokes.[] | keys | join(",")' - | jq -Rsc '. / "\n" - [""]')"
+          
 
   # ------------------------
   my_matrix:
@@ -40,9 +29,11 @@ jobs:
     strategy:
       matrix:
         service: ${{ fromJSON(needs.say_hello.outputs.services) }}
-        version: ${{ fromJSON(needs.say_hello.outputs.versions) }}
     steps:
-      - name: Matrix => (${{ matrix.service }} ${{ matrix.version}})
+      - uses: actions/checkout@v2 # create a checkout (pull repository) in the runner working_dir (usually _work)
+      - run: git pull origin ${GITHUB_REF##*/}
+
+      - name: Matrix => (${{ matrix.service }}
         run: |
           echo ${{ matrix.service }}
-          echo ${{ matrix.version }}
+        
