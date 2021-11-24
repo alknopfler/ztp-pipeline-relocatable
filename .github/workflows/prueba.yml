@@ -1,12 +1,14 @@
 name: prueba
 on:
-  push:
-    branches: [validation-spokes]
-env:
-  RUNNER: "rh-server3"
+  workflow_dispatch:
+    inputs:
+      RUNNER:
+        description: 'GitHub Action Runner Tag'
+        required: true
+
 jobs:
   get-lines:
-    runs-on: ${{env.RUNNER}}
+    runs-on: ${{github.event.inputs.RUNNER}}
     outputs:
       spokes: ${{ steps.generate-matrix.outputs.spokes }}
     steps:
@@ -18,7 +20,7 @@ jobs:
           echo ::set-output name=spokes::${SPOKES}
 
   hello_world_job:
-    runs-on: ubuntu-latest
+    runs-on: ${{github.event.inputs.RUNNER}}
     name: A job to say hello
     steps:
       - uses: actions/checkout@v2 # create a checkout (pull repository) in the runner working_dir (usually _work)
