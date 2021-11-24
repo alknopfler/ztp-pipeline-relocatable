@@ -1,6 +1,7 @@
 name: prueba
 on:
-  workflow_dispatch:
+  push:
+    branches: [validation-spokes ]k 
 
 jobs:
   hello_world_job:
