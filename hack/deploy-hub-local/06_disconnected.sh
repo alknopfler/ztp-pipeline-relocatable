@@ -64,7 +64,7 @@ oc adm release mirror -a $PULL_SECRET --from=$OPENSHIFT_RELEASE_IMAGE --to-relea
 echo "{\"auths\": {\"$REGISTRY_NAME:5000\": {\"auth\": \"$KEY\", \"email\": \"jhendrix@karmalabs.com\"}}}" >/root/temp.json
 
 if [ "$(grep imageContentSources /root/install-config.yaml)" == "" ]; then
-	cat <<EOF >>/root/install-config.yaml
+    cat <<EOF >>/root/install-config.yaml
 imageContentSources:
 - mirrors:
   - $REGISTRY_NAME:5000/ocp4
@@ -80,16 +80,16 @@ imageContentSources:
 {% endif %}
 EOF
 else
-	IMAGECONTENTSOURCES="- mirrors:\n  - $REGISTRY_NAME:5000/ocp4\n  source: quay.io/openshift-release-dev/ocp-v4.0-art-dev\n- mirrors:\n  - $REGISTRY_NAME:5000/ocp4\n  source: registry.ci.openshift.org/ocp/release"
-	sed -i "/imageContentSources/a${IMAGECONTENTSOURCES}" /root/install-config.yaml
+    IMAGECONTENTSOURCES="- mirrors:\n  - $REGISTRY_NAME:5000/ocp4\n  source: quay.io/openshift-release-dev/ocp-v4.0-art-dev\n- mirrors:\n  - $REGISTRY_NAME:5000/ocp4\n  source: registry.ci.openshift.org/ocp/release"
+    sed -i "/imageContentSources/a${IMAGECONTENTSOURCES}" /root/install-config.yaml
 fi
 if [ "$(grep additionalTrustBundle /root/install-config.yaml)" == "" ]; then
-	echo "additionalTrustBundle: |" >>/root/install-config.yaml
-	sed -e 's/^/  /' /opt/registry/certs/domain.crt >>/root/install-config.yaml
+    echo "additionalTrustBundle: |" >>/root/install-config.yaml
+    sed -e 's/^/  /' /opt/registry/certs/domain.crt >>/root/install-config.yaml
 else
-	LOCALCERT="-----BEGIN CERTIFICATE-----\n $(grep -v CERTIFICATE /opt/registry/certs/domain.crt | tr -d '[:space:]')\n -----END CERTIFICATE-----"
-	sed -i "/additionalTrustBundle/a${LOCALCERT}" /root/install-config.yaml
-	sed -i 's/^-----BEGIN/ -----BEGIN/' /root/install-config.yaml
+    LOCALCERT="-----BEGIN CERTIFICATE-----\n $(grep -v CERTIFICATE /opt/registry/certs/domain.crt | tr -d '[:space:]')\n -----END CERTIFICATE-----"
+    sed -i "/additionalTrustBundle/a${LOCALCERT}" /root/install-config.yaml
+    sed -i 's/^-----BEGIN/ -----BEGIN/' /root/install-config.yaml
 fi
 echo $REGISTRY_NAME:5000/ocp4/release:$OCP_RELEASE >/root/version.txt
 
