@@ -114,6 +114,6 @@ jobs:
       matrix:
         service: ${{ fromJSON(needs.extractspokes.outputs.services) }}
     steps:
-      - name: (${{ matrix.service }}
+      - name: ${{ matrix.service }}
         run: |
           echo ${{ matrix.service }}
