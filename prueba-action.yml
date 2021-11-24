@@ -1,0 +1,16 @@
+name: 'Hello World'
+description: 'Greet someone'
+inputs:
+  filetoread:  # id of input
+    description: 'fichero yml'
+    required: true
+outputs:
+  steps-number:
+    description: "steps number"
+    value: ${{ steps.step-generator.outputs.number-of-steps }}
+runs:
+  using: "composite"
+  steps:
+    - id: step-generator
+      run: echo "::set-output name=number-of-steps::$(wc -l examples/config.yaml)"
+      shell: bash

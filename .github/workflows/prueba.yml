@@ -1,0 +1,13 @@
+name: prueba
+on:
+  workflow_dispatch:
+
+jobs:
+  hello_world_job:
+    runs-on: ubuntu-latest
+    name: A job to say hello
+    steps:
+      - uses: actions/checkout@v2 # create a checkout (pull repository) in the runner working_dir (usually _work)
+      - run: git pull origin ${GITHUB_REF##*/}
+      - run: echo steps-number ${{ steps.foo.outputs.random-steps }}
+        shell: bash
