@@ -12,5 +12,5 @@ runs:
   using: "composite"
   steps:
     - id: step-generator
-      run: echo "::set-output name=number-of-steps::$(wc -l examples/config.yaml)"
+      run: echo "::set-output name=number-of-steps::$(wc -l ./examples/config.yaml)"
       shell: bash
