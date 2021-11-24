@@ -100,19 +100,21 @@ jobs:
     needs: deploy-spokes
     runs-on: ${{github.event.inputs.RUNNER}}
     outputs:
-      listspokes: ${{ steps.generate-matrix.outputs.listspokes }}
+      services: ${{ steps.generate-matrix.outputs.services }}
     steps:
+      - uses: actions/checkout@v2 # create a checkout (pull repository) in the runner working_dir (usually _work)
+      - run: git pull origin ${GITHUB_REF##*/}
       - name: Extract list of Spokes
         run: |
-          echo "::set-output name=listspokes::$(cat /root/amorgant/spokes.yaml | yq e '.spokes.[] | keys | join(",")' - | jq -Rsc '. / "\n" - [""]')"
+          echo "::set-output name=services::$(cat /root/amorgant/spokes.yaml | yq e '.spokes.[] | keys | join(",")' - | jq -Rsc '. / "\n" - [""]')"
           
   verify-spokes-installation:
     needs: extractspokes
     runs-on: ${{github.event.inputs.RUNNER}}
     strategy:
       matrix:
-        listspokes: ${{ fromJSON(needs.extractspokes.outputs.listspokes) }}
+        service: ${{ fromJSON(needs.extractspokes.outputs.services) }}
     steps:
-        - name: (${{ matrix.listspokes }}
-          run: |
-            echo ${{ matrix.listspokes }}
+      - name: (${{ matrix.service }}
+        run: |
+          echo ${{ matrix.service }}
