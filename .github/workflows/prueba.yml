@@ -23,7 +23,6 @@ jobs:
   my_matrix:
     runs-on: ubuntu-latest
     needs:
-      - my_echo
       - say_hello
     strategy:
       matrix:
