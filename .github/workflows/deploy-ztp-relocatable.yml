@@ -107,7 +107,7 @@ jobs:
           echo ${{github.event.inputs.SPOKES_FILE}}
           lists="$(cat ${{github.event.inputs.SPOKES_FILE}} | yq e '.spokes.[] | keys | join(",")' - | jq -Rsc '. / "\n" - [""]')"
           echo $lists
-          echo "::set-output name=list-spokes::$lists"
+          echo "::set-output name=list-spokes::$(cat /root/amorgant/spokes.yaml | yq e '.spokes.[] | keys | join(",")' - | jq -Rsc '. / "\n" - [""]')"
           
   verify-spokes-installation:
     needs: extract-list-of-spokes
@@ -116,6 +116,6 @@ jobs:
       matrix:
         list-spokes: ${{ fromJSON(needs.extract-list-of-spokes.outputs.list-spokes) }}
     steps:
-        - name: Verify spokes => (${{ matrix.list-spokes }}
+        - name: (${{ matrix.list-spokes }}
           run: |
             echo ${{ matrix.list-spokes }}
