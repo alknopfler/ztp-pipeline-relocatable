@@ -100,11 +100,10 @@ jobs:
     needs: deploy-spokes
     runs-on: ${{github.event.inputs.RUNNER}}
     outputs:
-      services: ${{ steps.generate-matrix.outputs.services }}
+      services: ${{ steps.spokeslist.outputs.services }}
     steps:
-      - uses: actions/checkout@v2 # create a checkout (pull repository) in the runner working_dir (usually _work)
-      - run: git pull origin ${GITHUB_REF##*/}
       - name: Extract list of Spokes
+        id: spokeslist
         run: |
           echo "::set-output name=services::$(cat /root/amorgant/spokes.yaml | yq e '.spokes.[] | keys | join(",")' - | jq -Rsc '. / "\n" - [""]')"
           
