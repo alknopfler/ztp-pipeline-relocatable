@@ -15,7 +15,7 @@ jobs:
       - name: Generate Matrix
         id: generate-matrix
         run: |
-          apt-get install yq -y
+          sudo apt-get install yq -y
           cd examples
           i=0
           RESULT=$(yq eval ".spokes[$i]" config.yaml)
