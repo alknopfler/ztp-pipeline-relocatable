@@ -13,9 +13,9 @@ jobs:
         id: generate-matrix
         shell: bash
         run: |
-          SPOKES='${{ wc -l ./examples/config.yaml }}'
+          SPOKES=$(wc -l ./examples/config.yaml)
           echo ::set-output name=spokes::${SPOKES}
-          
+
   hello_world_job:
     runs-on: ubuntu-latest
     name: A job to say hello
