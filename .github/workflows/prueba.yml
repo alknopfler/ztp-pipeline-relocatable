@@ -2,10 +2,11 @@ name: prueba
 on:
   push:
     branches: [validation-spokes]
-
+env:
+  RUNNER: "rh-server3"
 jobs:
   get-lines:
-    runs-on: ubuntu-latest
+    runs-on: ${{env.RUNNER}}
     outputs:
       spokes: ${{ steps.generate-matrix.outputs.spokes }}
     steps:
